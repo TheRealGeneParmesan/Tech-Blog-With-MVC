@@ -26,7 +26,7 @@ router.get('/', async (req, res) => {
             // logged_in: req.session.logged_in
         });
     } catch (err) {
-        res.status(500).json('home');
+        res.status(500).json(err);
     }
 });
 
@@ -52,8 +52,55 @@ router.get('/blog/:id', async (req, res) => {
     }
 });
 
+// Takes user to the edit handlebars with form 
+
+router.get('/edit/:id', async (req, res) => {
+    try {
+        const blogData = await Blog.findByPk(req.params.id, {
+            include: [
+                {
+                    model: User,
+                    attributes: ['name'],
+                },
+            ],
+        });
+
+        const blog = blogData.get({ plain: true });
+
+        res.render('edit', {
+            ...blog,
+            logged_in: req.session.logged_in
+        });
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+router.put('/edit/:id', async (req, res) => {
+    try {
+        const blogData = await Blog.update({
+            name: req.body.name,
+            description: req.body.description
+        }, {
+            where: {
+                id: req.params.id,
+                user_id: req.session.user_id,
+            },
+
+        });
+        if (!blogData) {
+            res.status(404).json({ message: 'No blog found with this id!' });
+            return;
+        }
+
+        res.status(200).json(blogData);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
 // Use withAuth middleware to prevent access to route
-router.get('/home', withAuth, async (req, res) => {
+router.get('/dashboard', withAuth, async (req, res) => {
     try {
         // Find the logged in user based on the session ID
         const userData = await User.findByPk(req.session.user_id, {
@@ -63,7 +110,7 @@ router.get('/home', withAuth, async (req, res) => {
 
         const user = userData.get({ plain: true });
 
-        res.render('home', {
+        res.render('dashboard', {
             ...user,
             logged_in: true
         });
@@ -75,7 +122,7 @@ router.get('/home', withAuth, async (req, res) => {
 router.get('/login', (req, res) => {
     // If the user is already logged in, redirect the request to another route
     if (req.session.logged_in) {
-        res.redirect('/home');
+        res.redirect('/dashboard');
         return;
     }
 
