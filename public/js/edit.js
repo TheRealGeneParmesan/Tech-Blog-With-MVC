@@ -6,7 +6,6 @@ const editHandler = async (event) => {
     const description = document.querySelector('#blog-desc').value.trim();
     const id = document.querySelector('#edit-btn').getAttribute('data-id');
 
-    alert(`name: ${name}, description: ${description}, id: ${id}`);
 
     if (name && description) {
         const response = await fetch(`/api/blogs/${id}`, {
