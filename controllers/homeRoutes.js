@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { Blog, User } = require('../models');
+const { Blog, User, Comment } = require('../models');
 const withAuth = require('../utils/auth');
 
 router.get('/', async (req, res) => {
@@ -29,6 +29,7 @@ router.get('/', async (req, res) => {
         res.status(500).json(err);
     }
 });
+
 
 router.get('/blog/:id', async (req, res) => {
     try {
@@ -96,6 +97,30 @@ router.put('/edit/:id', async (req, res) => {
         res.status(200).json(blogData);
     } catch (err) {
         res.status(500).json(err);
+    }
+});
+
+// post a comment
+
+router.post('/:id/comments', async (req, res) => {
+    try {
+        const blogId = req.params.id;
+        const { comment } = req.body;
+        const userId = req.session.user_id;
+
+        if (!comment || !userId) {
+            return res.status(400).json({ message: 'Comment text and user ID are required' });
+        }
+
+        const newComment = await Comment.create({
+            comment,
+            user_id: userId,
+            blog_id: blogId
+        });
+
+        res.status(200).json(newComment);
+    } catch (err) {
+        res.status(400).json(err);
     }
 });
 
