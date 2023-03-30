@@ -14,19 +14,16 @@ const commentHandler = async (event) => {
         });
 
         if (response.ok) {
-            // Clear the comment input field
             document.querySelector('#comment-txt').value = '';
 
             // Create a new div element for the comment
             const commentDiv = document.createElement('div');
             commentDiv.classList.add('comment');
 
-            // Set the innerHTML of the comment div
             commentDiv.innerHTML = `
           <p>${comment}</p>
           <p>Posted by You on ${new Date().toLocaleString()}</p>
         `;
-
             // Append the comment div to the "comments" section
             const commentsSection = document.querySelector('.comments');
             commentsSection.appendChild(commentDiv);
