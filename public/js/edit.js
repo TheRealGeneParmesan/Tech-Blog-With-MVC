@@ -1,5 +1,4 @@
 const editHandler = async (event) => {
-
     event.preventDefault();
 
     const name = document.querySelector('#blog-name').value.trim();
