@@ -15,6 +15,7 @@ const commentHandler = async (event) => {
 
         if (response.ok) {
             document.querySelector('#comment-txt').value = '';
+            const newComment = await response.json();
 
             // Create a new div element for the comment
             const commentDiv = document.createElement('div');
@@ -22,7 +23,7 @@ const commentHandler = async (event) => {
 
             commentDiv.innerHTML = `
           <p>${comment}</p>
-          <p>Posted by You on ${new Date().toLocaleString()}</p>
+          <p>Posted by ${comment.name} on ${new Date().toLocaleString()}</p>
         `;
             // Append the comment div to the "comments" section
             const commentsSection = document.querySelector('.comments');
@@ -37,3 +38,4 @@ const commentHandler = async (event) => {
 document
     .querySelector('.comment-form')
     .addEventListener('submit', commentHandler);
+

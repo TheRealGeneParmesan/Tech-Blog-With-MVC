@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { Blog, Comment } = require('../../models');
+const { Blog, Comment, User } = require('../../models');
 const withAuth = require('../../utils/auth');
 
 router.post('/', async (req, res) => {
@@ -30,14 +30,29 @@ router.post('/:id/comments', async (req, res) => {
         const newComment = await Comment.create({
             comment,
             user_id: userId,
-            blog_id: blogId
+            blog_id: blogId,
+            include: [
+                {
+                    model: User,
+                    attributes: ['name'],
+                },
+            ],
         });
 
-        res.status(200).json(newComment);
+        const serializedComments = newComment.map((comment) => comment.get({ plain: true }));
+
+        console.log(serializedComments)
+
+        // Pass serialized data and session flag into template
+        res.render('homepage', {
+            blogs: serializedComments,
+            // logged_in: req.session.logged_in
+        });
     } catch (err) {
-        res.status(400).json(err);
+        res.status(500).json(err);
     }
 });
+
 
 router.put('/:id', async (req, res) => {
     try {
