@@ -1,6 +1,6 @@
 ## Jeremy's fullstack Tech Blog using MVC 
 
-    A blog spcial media site where developers can publish their blog posts 
+    A blog spcial media site where developers can publish their posts 
 
 ## Table of Contents
 
